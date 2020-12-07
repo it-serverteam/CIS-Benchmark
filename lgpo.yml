@@ -1,0 +1,38 @@
+---
+- hosts: "{{hosts_prompt}}"
+  gather_facts: no
+
+  vars_prompt:
+    - name: "hosts_prompt" ## Host where playbook about to play
+      prompt: "Enter the Host or Host group need to run with this Playbook"
+      private: no
+     
+  tasks:
+    - name: create security operations directories
+      win_file:
+        path: "{{item}}"
+        state: directory
+      with_items:
+       - "C:\\SecOps"
+
+    - name: copy lgpo.exe cli on host
+      win_copy:
+        src: /root/ansible/itops/files/LGPO.exe
+        dest: "C:\\SecOps\\LGPO.exe"
+        
+    - name: create lgpo.exe cli on host
+      win_copy:
+        src: /root/ansible/itops/files/{3A450753-C7C5-4114-8628-663DE20CC460}
+        dest: "C:\\SecOps\\{3A450753-C7C5-4114-8628-663DE20CC460}"
+
+#    - name: unzip file
+#      win_unzip:
+#        src: "C:\\SecOps\\LGPO.zip"
+#        dest: "C:\\SecOps\\LGPO"
+
+#    - name: run lgpo export script
+#      win_command: powershell.exe -ExecutionPolicy Bypass -File C:\\SecOps\\LGPO\\LGPO\\LGPO-Export.ps1
+      
+    - name: run lgpo export script
+      win_command: C:\SecOps\LGPO.exe /g C:\SecOps\{3A450753-C7C5-4114-8628-663DE20CC460}
+
